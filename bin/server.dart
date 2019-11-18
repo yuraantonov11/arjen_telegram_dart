@@ -1,4 +1,4 @@
-import 'dart:io' show Platform;
+import 'dart:io' show Platform, HttpClient;
 // import 'dart:io' as io;
 
 import 'package:teledart/teledart.dart';
@@ -28,8 +28,14 @@ void main() {
 
   // Or using short cuts
   teledart
-      .onCommand('short')
-      .listen(((message) => teledart.replyMessage(message, 'This works too!')));
+      .onCommand('subscribe')
+      .listen(( (message) async {
+        print(message.text);
+        var c = HttpClient();
+        print(await c.getUrl(Uri.parse('https://swapi.co/api/people/1')));
+
+        return teledart.replyMessage(message, 'This works too!');
+      }));
 
   // You can even filter streams with stream processing methods
   // See: https://www.dartlang.org/tutorials/language/streams#methods-that-modify-a-stream
