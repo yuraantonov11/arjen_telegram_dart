@@ -6,7 +6,7 @@ import 'package:html/dom.dart';
 
 
 
-Future getAvailability({uri = 'https://arjen.com.ua/koftu/5566/'}) async {
+Future getAvailability(uri) async {
   var client = Client();
   // Make API call to Hackernews homepage
 //  Response response = await client.get('https://arjen.com.ua/koftu/6464/');
