@@ -9,8 +9,6 @@ import 'package:dart_server/arjen_links_scraper.dart' as arjen_links_scraper;
 
 
 void main() async{
-  print(await arjen_links_scraper.getAvailability(uri: 'https://arjen.com.ua/koftu/6464/'));
-
   final Map<String, String> envVars = Platform.environment;
 
   TeleDart teledart = TeleDart(Telegram(envVars['BOT_TOKEN']), Event());
@@ -35,13 +33,17 @@ void main() async{
   teledart
       .onCommand('get')
       .listen(( (message) async {
+        var arr = message.text.split(' ');
+        if(arr.length<2){
+          return teledart.replyMessage(message, 'Url is not valid');
+        }
         var link = message.text.split(' ')[1];
         bool _validURL = Uri.parse(link).isAbsolute;
         if(!_validURL){
           return teledart.replyMessage(message, 'Url is not valid');
         }
 
-        var itemStatus = await arjen_links_scraper.getAvailability(uri: link);
+        var itemStatus = await arjen_links_scraper.getAvailability(link);
 
         return teledart.replyMessage(message, itemStatus);
       }));
