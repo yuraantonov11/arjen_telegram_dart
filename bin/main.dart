@@ -1,5 +1,7 @@
 import 'dart:io' show Platform, HttpClient;
 // import 'dart:io' as io;
+import 'package:dart_server/people_controller.dart';
+import 'package:mongo_dart/mongo_dart.dart';
 
 import 'package:teledart/teledart.dart';
 import 'package:teledart/telegram.dart';
@@ -8,7 +10,14 @@ import 'package:teledart/model.dart';
 import 'package:dart_server/arjen_links_scraper.dart' as arjen_links_scraper;
 
 
-void main() async{
+void main() async {
+  Db db = Db("mongodb://yuraantonov11:r8DoC6ohdJds@ds151973.mlab.com:51973/arjen_tg_dart");
+  await db.open();
+
+  var Users = PeopleController(db);
+
+  print('Connected to database');
+
   final Map<String, String> envVars = Platform.environment;
 
   TeleDart teledart = TeleDart(Telegram(envVars['BOT_TOKEN']), Event());
@@ -25,9 +34,26 @@ void main() async{
   //     .then((me) => print('${me.username} is initialised'));
 
   // You can listen to messages like this
-//  teledart.onMessage(entityType: 'bot_command', keyword: 'start').listen(
-//          (message) =>
-//          teledart.telegram.sendMessage(message.chat.id, 'Hello TeleDart!'));
+  //  teledart.onMessage(entityType: 'bot_command', keyword: 'start').listen(
+  //          (message) =>
+  //          teledart.telegram.sendMessage(message.chat.id, 'Hello TeleDart!'));
+
+
+  // Or using short cuts
+  teledart
+      .onCommand('start')
+      .listen(( (message) async {
+
+        print(message.from.toString());
+        print(await Users.getUser(message.from.id));
+
+//        FIXME: Convert message.from to map of strings
+//        var userData = message.from;
+        var userData = {"id": 123};
+
+        print(await Users.createUser(userData));
+        print(await Users.getUser(message.from.id));
+  }));
 
   // Or using short cuts
   teledart

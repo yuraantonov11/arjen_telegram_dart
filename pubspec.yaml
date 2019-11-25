@@ -8,6 +8,7 @@ environment:
   sdk: '>=2.5.0 <3.0.0'
 
 dependencies:
+  mongo_dart: ^0.4.0
   teledart: ^0.0.34
   http: ^0.12.0+2
   html: ^0.14.0+3
