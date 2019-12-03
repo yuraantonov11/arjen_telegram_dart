@@ -7,11 +7,14 @@ import 'package:teledart/teledart.dart';
 import 'package:teledart/telegram.dart';
 import 'package:teledart/model.dart';
 
+import 'package:dart_server/models/user_model.dart';
 import 'package:dart_server/arjen_links_scraper.dart' as arjen_links_scraper;
 
 
 void main() async {
+  print('PORT');
   Db db = Db("mongodb://yuraantonov11:r8DoC6ohdJds@ds151973.mlab.com:51973/arjen_tg_dart");
+
   await db.open();
 
   var Users = PeopleController(db);
@@ -19,8 +22,9 @@ void main() async {
   print('Connected to database');
 
   final Map<String, String> envVars = Platform.environment;
+  print(envVars);
 
-  TeleDart teledart = TeleDart(Telegram(envVars['BOT_TOKEN']), Event());
+  TeleDart teledart = TeleDart(Telegram('1002046907:AAHvjYyV6NOI293XHID7NsyC9IaDKA0jqA4'), Event());
 
   // TeleDart uses longpull by default.
   teledart.start().then((me) => print('${me.username} is initialised'));
@@ -43,16 +47,17 @@ void main() async {
   teledart
       .onCommand('start')
       .listen(( (message) async {
+        User user = User.fromJson({'id': 1});
 
-        print(message.from.toString());
-        print(await Users.getUser(message.from.id));
+//        print(await Users.getUser(message.from.id));
 
 //        FIXME: Convert message.from to map of strings
 //        var userData = message.from;
-        var userData = {"id": 123};
+        var userData = {"_id": 123};
 
-        print(await Users.createUser(userData));
-        print(await Users.getUser(message.from.id));
+//        print(await Users.createUser(user));
+//        print(await Users.getUser(123));
+    return teledart.replyMessage(message, 'Started');
   }));
 
   // Or using short cuts
