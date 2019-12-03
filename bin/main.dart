@@ -12,7 +12,6 @@ import 'package:dart_server/arjen_links_scraper.dart' as arjen_links_scraper;
 
 
 void main() async {
-  print('PORT');
   Db db = Db("mongodb://yuraantonov11:r8DoC6ohdJds@ds151973.mlab.com:51973/arjen_tg_dart");
 
   await db.open();
@@ -22,7 +21,8 @@ void main() async {
   print('Connected to database');
 
   final Map<String, String> envVars = Platform.environment;
-  print(envVars);
+  print('PORT');
+  print(envVars['PORT']);
 
   TeleDart teledart = TeleDart(Telegram('1002046907:AAHvjYyV6NOI293XHID7NsyC9IaDKA0jqA4'), Event());
 
