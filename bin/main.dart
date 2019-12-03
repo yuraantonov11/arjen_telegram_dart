@@ -13,20 +13,10 @@ import 'package:dart_server/arjen_links_scraper.dart' as arjen_links_scraper;
 
 Future main() async {
   final Map<String, String> envVars = Platform.environment;
-  print('PORT');
-  print(envVars['PORT']);
   var port = int.tryParse(envVars['PORT'] ?? '8080');
+  print(port);
+  print(envVars["\$PORT"]);
 
-  var server = await HttpServer.bind(
-    InternetAddress.loopbackIPv4,
-    port,
-  );
-  print('Listening on localhost:${server.port}');
-
-  await for (HttpRequest request in server) {
-    request.response.write('Hello, world!');
-    await request.response.close();
-  }
   Db db = Db("mongodb://yuraantonov11:r8DoC6ohdJds@ds151973.mlab.com:51973/arjen_tg_dart");
 
   await db.open();
