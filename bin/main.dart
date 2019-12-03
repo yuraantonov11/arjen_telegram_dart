@@ -1,5 +1,5 @@
 import 'dart:io' show Platform, HttpClient;
-// import 'dart:io' as io;
+import 'dart:io';
 import 'package:dart_server/people_controller.dart';
 import 'package:mongo_dart/mongo_dart.dart';
 
@@ -11,7 +11,22 @@ import 'package:dart_server/models/user_model.dart';
 import 'package:dart_server/arjen_links_scraper.dart' as arjen_links_scraper;
 
 
-void main() async {
+Future main() async {
+  final Map<String, String> envVars = Platform.environment;
+  print('PORT');
+  print(envVars['PORT']);
+  var port = int.tryParse(envVars['PORT'] ?? '8080');
+
+  var server = await HttpServer.bind(
+    InternetAddress.loopbackIPv4,
+    port,
+  );
+  print('Listening on localhost:${server.port}');
+
+  await for (HttpRequest request in server) {
+    request.response.write('Hello, world!');
+    await request.response.close();
+  }
   Db db = Db("mongodb://yuraantonov11:r8DoC6ohdJds@ds151973.mlab.com:51973/arjen_tg_dart");
 
   await db.open();
@@ -19,10 +34,6 @@ void main() async {
   var Users = PeopleController(db);
 
   print('Connected to database');
-
-  final Map<String, String> envVars = Platform.environment;
-  print('PORT');
-  print(envVars['PORT']);
 
   TeleDart teledart = TeleDart(Telegram('1002046907:AAHvjYyV6NOI293XHID7NsyC9IaDKA0jqA4'), Event());
 
