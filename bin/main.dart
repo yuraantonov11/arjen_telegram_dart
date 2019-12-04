@@ -13,22 +13,33 @@ import 'package:dart_server/arjen_links_scraper.dart' as arjen_links_scraper;
 
 Future main() async {
   final Map<String, String> envVars = Platform.environment;
-  var port = int.tryParse(envVars['PORT'] ?? '8080');
-  print(port);
-  print(envVars["\$PORT"]);
+  print('PORT');
+  print(envVars['PORT']);
+  var port = int.tryParse(Platform.environment['PORT'] ?? '8080');
 
-  Db db = Db("mongodb://yuraantonov11:r8DoC6ohdJds@ds151973.mlab.com:51973/arjen_tg_dart");
+  var server = await HttpServer.bind(
+    InternetAddress.loopbackIPv4,
+    port,
+  );
+  print('Listening on localhost:${server.port}');
 
-  await db.open();
-
-  var Users = PeopleController(db);
-
-  print('Connected to database');
-
-  TeleDart teledart = TeleDart(Telegram('1002046907:AAHvjYyV6NOI293XHID7NsyC9IaDKA0jqA4'), Event());
-
-  // TeleDart uses longpull by default.
-  teledart.start().then((me) => print('${me.username} is initialised'));
+  await for (HttpRequest request in server) {
+    print('ping');
+    request.response.write('Hello, world!');
+    await request.response.close();
+  }
+//  Db db = Db("mongodb://yuraantonov11:r8DoC6ohdJds@ds151973.mlab.com:51973/arjen_tg_dart");
+//
+//  await db.open();
+//
+//  var Users = PeopleController(db);
+//
+//  print('Connected to database');
+//
+//  TeleDart teledart = TeleDart(Telegram('1002046907:AAHvjYyV6NOI293XHID7NsyC9IaDKA0jqA4'), Event());
+//
+//  // TeleDart uses longpull by default.
+//  teledart.start().then((me) => print('${me.username} is initialised'));
 
   // In case you decided to use webhook.
   // teledart.setupWebhook(envVars['HOST_URL'], envVars['BOT_TOKEN'],
@@ -45,40 +56,40 @@ Future main() async {
 
 
   // Or using short cuts
-  teledart
-      .onCommand('start')
-      .listen(( (message) async {
-        User user = User.fromJson({'id': 1});
-
-//        print(await Users.getUser(message.from.id));
-
-//        FIXME: Convert message.from to map of strings
-//        var userData = message.from;
-        var userData = {"_id": 123};
-
-//        print(await Users.createUser(user));
-//        print(await Users.getUser(123));
-    return teledart.replyMessage(message, 'Started');
-  }));
-
-  // Or using short cuts
-  teledart
-      .onCommand('get')
-      .listen(( (message) async {
-        var arr = message.text.split(' ');
-        if(arr.length<2){
-          return teledart.replyMessage(message, 'Url is not valid');
-        }
-        var link = message.text.split(' ')[1];
-        bool _validURL = Uri.parse(link).isAbsolute;
-        if(!_validURL){
-          return teledart.replyMessage(message, 'Url is not valid');
-        }
-
-        var itemStatus = await arjen_links_scraper.getAvailability(link);
-
-        return teledart.replyMessage(message, itemStatus);
-      }));
+//  teledart
+//      .onCommand('start')
+//      .listen(( (message) async {
+//        User user = User.fromJson({'id': 1});
+//
+////        print(await Users.getUser(message.from.id));
+//
+////        FIXME: Convert message.from to map of strings
+////        var userData = message.from;
+//        var userData = {"_id": 123};
+//
+////        print(await Users.createUser(user));
+////        print(await Users.getUser(123));
+//    return teledart.replyMessage(message, 'Started');
+//  }));
+//
+//  // Or using short cuts
+//  teledart
+//      .onCommand('get')
+//      .listen(( (message) async {
+//        var arr = message.text.split(' ');
+//        if(arr.length<2){
+//          return teledart.replyMessage(message, 'Url is not valid');
+//        }
+//        var link = message.text.split(' ')[1];
+//        bool _validURL = Uri.parse(link).isAbsolute;
+//        if(!_validURL){
+//          return teledart.replyMessage(message, 'Url is not valid');
+//        }
+//
+//        var itemStatus = await arjen_links_scraper.getAvailability(link);
+//
+//        return teledart.replyMessage(message, itemStatus);
+//      }));
 
   // You can even filter streams with stream processing methods
   // See: https://www.dartlang.org/tutorials/language/streams#methods-that-modify-a-stream
