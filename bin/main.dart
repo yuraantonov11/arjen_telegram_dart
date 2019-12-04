@@ -36,10 +36,10 @@ Future main() async {
 //
 //  print('Connected to database');
 //
-//  TeleDart teledart = TeleDart(Telegram('1002046907:AAHvjYyV6NOI293XHID7NsyC9IaDKA0jqA4'), Event());
+  TeleDart teledart = TeleDart(Telegram('1002046907:AAHvjYyV6NOI293XHID7NsyC9IaDKA0jqA4'), Event());
 //
 //  // TeleDart uses longpull by default.
-//  teledart.start().then((me) => print('${me.username} is initialised'));
+  teledart.start().then((me) => print('${me.username} is initialised'));
 
   // In case you decided to use webhook.
   // teledart.setupWebhook(envVars['HOST_URL'], envVars['BOT_TOKEN'],
